@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>project.js 2.0 版本</title>
+</head>
+<body>
+
+<script src="../src/util.js"></script>
+<script src="../src/thenable.js"></script>
+
+<script>
+  var thenable = Thenable.all([1, 2, 3]);
+  thenable.then(function(){
+    console.log('全部成功了');
+  });
+</script>
+</body>
+</html>

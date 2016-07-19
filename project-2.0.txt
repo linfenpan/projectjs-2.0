@@ -1,0 +1,114 @@
+2.0 版本，包含几个板块的内容:
+
+
+一、在 define 外的 require
+
+  # 场景1
+    require('index');
+
+  # 场景2
+    require(['index1', 'index2']);
+
+  # 场景3
+    require('index1', 'index2');
+
+  # 场景4
+    require('index', function(index) {  });
+
+  # 场景5
+    require(['index1', 'index2'], function(index1, index2) { });
+
+  # 场景6
+    require('index1', function(index1) {
+      // 同步返回结果
+      var index2 = require('index2');
+    });
+
+  # 场景7
+    // 路径使用简单模板
+    require('{root}/index')
+
+
+二、在 define 内部的 require
+
+  # 场景1
+    // 同步返回结果
+    var sideBar = require('sideBar');
+
+  # 场景2
+    // 忽略下面的 require
+    var sideBar = require(root + '/sideBar');
+
+  # 场景3
+    // 异步加载
+    require.async('index1');
+    require.async('index1', function(index1) { });
+    require.async('index1', 'index2');
+    require.async('index1', 'index2', function() { });
+    require.async(['index1']);
+    require.async(['index1', 'index2'], function() { });
+
+    require(['index1']);
+    require(['index1', 'index2']);
+
+  # 场景4
+    // 参数1，透传给当前loader处理
+    require('index1', 参数1);
+
+  # 场景5
+    this === module
+    module.url // 当前连接
+    module.dir // 当前目录
+    module.path // 路径工具
+
+
+三、define的使用
+
+  # 场景1
+    define(function(require, exports) { exports.data = 123; });
+
+  # 场景2
+    define(function(require, exports, module) { module.exports = 123; });
+
+  # 场景3
+    define('mod1', function(require, exports) { exports.data = 123; });
+
+  # 场景4
+    // 加载 mod1 后，再执行，考虑到之后的代码压缩
+    define(['mod1'], function(require, exports) { });
+
+  # 场景5
+    define('mod1', ['jquery'], function(require, exports) { });
+
+  # 场景6
+    // 指定加载根地址
+    define(function() {}, '/path');
+    define('mod1', function() {}, '/path');
+    define('mod1', ['jquery'], function() {}, '/path');
+
+
+四、项目配置
+
+  # 场景1
+    require({
+      // 基础加载路径
+      base: '',
+      // 路径模板
+      template: {
+
+      },
+      // 已加载的脚本，通过 alias 注入
+      alias: {
+        jquery: window.jQuery
+      },
+    });
+
+  # 场景2
+    require.base();
+    require.template({});
+    require.alias({});
+
+  # 场景3
+    require.loader.add('ajax', function(url, args...) {
+      return Function: getResult;
+    });
