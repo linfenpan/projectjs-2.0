@@ -16,8 +16,8 @@ function isFunction(fn) {
   return type(fn) === 'function';
 }
 
-function isObject(obj) {
-  return type(obj) === 'object';
+function isString(str) {
+  return type(str) === 'string';
 }
 
 function isArray(arr) {
@@ -47,10 +47,17 @@ function toArray(obj) {
   return [].slice.call(obj, 0);
 }
 
-function extend(obj1, obj2) {
-  keys(obj2, function(key, value) {
-    obj1[key] = value;
+function extend(obj) {
+  var arr = toArray(arguments);
+  arr.unshift();
+
+  forEach(arr, function(source) {
+    keys(source, function(key, value) {
+      obj[key] = value;
+    });
   });
+
+  return obj;
 }
 
 function keys(obj, callback) {
@@ -65,4 +72,17 @@ function forEach(arr, callback) {
   for (var i = 0, max = arr.length; i < max; i++) {
     callback.call(arr, arr[i], i);
   }
+}
+
+// @NOTICES: 考虑到代码压缩之后，eval里的"o."就没效了..
+var template = Function("s", "o", "return s.replace(/{([^}]*)}/g,function(a,k){return eval('o.'+k)})");
+
+// 删除注释
+var COMMENT_REGEXP = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg;
+function removeComment(str) {
+  return str.replace(COMMENT_REGEXP, '');
+}
+
+function getAttribute(node, attr) {
+  return node.getAttribute(attr);
 }

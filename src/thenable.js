@@ -16,27 +16,19 @@ Thenable.prototype = {
     var list = this._records;
     var item;
     while (item = list.shift()) {
-      if (state === DONE) {
-        if (item.done) {
-          param = item.done.call(this, param);
-        }
-      } else {
-        if (item.fail) {
-          param = item.fail.call(this, param);
-        }
+      if (state === DONE && item.done) {
+        item.done.call(this, param);
+      } else if (state === FAIL && item.fail) {
+        item.fail.call(this, param);
       }
-      this._param = param;
     }
     return this;
   },
 
   _changeState: function(state, param) {
-    if (this._state === PENDING) {
-      this._state = state;
-      this._param = param;
-      return this._exe(param);
-    }
-    return this;
+    this._state = state;
+    this._param = param;
+    return this._exe(param);
   },
 
   resolve: function(param) {
@@ -64,19 +56,25 @@ Thenable.prototype = {
   }
 };
 
+Thenable.resolve = function(value) {
+  var thenable = new Thenable();
+  return thenable.resolve(value);
+}
+
 Thenable.all = function(args) {
   var thenable = new Thenable();
   var wait = args.length;
-  
+  var result = { length: wait };
+
   var check = function() {
-    wait <= 0 && thenable.resolve();
+    wait <= 0 && thenable.resolve(toArray(result));
   };
   check();
 
-  forEach(args, function(item) {
+  forEach(args, function(item, index) {
     if (isInstanceOf(item, Thenable)) {
       item.then(
-        function() { wait--; check(); },
+        function(data) { result[index] = data; wait--; check(); },
         function(err) { thenable.reject(err); }
       );
     } else {

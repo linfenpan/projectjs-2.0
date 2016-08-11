@@ -8,11 +8,18 @@
 
 <script src="../src/util.js"></script>
 <script src="../src/thenable.js"></script>
+<script src="../src/global.js"></script>
+<script src="../src/util.js"></script>
+<script src="../src/path.js"></script>
+<script src="../src/require-base.js"></script>
+<script src="../src/require-loader.js"></script>
+<script src="../src/js-loader.js"></script>
+<script src="../src/require-main.js"></script>
 
 <script>
-  var thenable = Thenable.all([1, 2, 3]);
-  thenable.then(function(){
-    console.log('全部成功了');
+  require_config();
+  require('./src/data.js', function(data) {
+    console.log(data);
   });
 </script>
 </body>
